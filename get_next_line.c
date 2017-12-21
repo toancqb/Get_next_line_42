@@ -5,59 +5,68 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/14 13:37:30 by qtran             #+#    #+#             */
-/*   Updated: 2017/12/14 14:57:16 by qtran            ###   ########.fr       */
+/*   Created: 2017/12/18 15:48:41 by qtran             #+#    #+#             */
+/*   Updated: 2017/12/21 15:12:46 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char    *ft_strncat(char *s1, const char *s2, int n)
+int	ft_to_stack(t_list *st, char *buf, int size)
 {
-    int i;
-    int j;
-    
-    i = 0;
-    while (s1[i] != '\0')
-        i++;
-    j = 0;
-    while (s2[j] != '\0' && j < n)
-    {
-        s1[i] = s2[j];
-        i++;
-        j++;
-    }
-    s1[i] = '\0';
-    return (s1);
+	char	*str;
+	int		i;
+	int		m;
+	t_list *elem;
+
+	str = ft_strchr(buf, '\n');
+	m = 0;
+	while (str != NULL)
+	{
+		elem = ft_stack_init_elem(ft_strsub(buf, 0, str - buf), str - buf);
+		ft_stack_push(st, elem);
+		ft_stack_push(ft_stack_init_elem("__\n__", 5));
+		m = str - buf;
+		str = ft_strchr(ft_strsub(buf, m, size - str + buf));
+	}
+	elem = ft_stack_init_elem(ft_strsub(buf, m, size - m), size - m);
+	ft_stack_push(st, elem);
+	if (!ft_strchr(ft_strsub(buf, m, size - m), '\n'))
+	{
+		return (3);
+	}
+	if (ft_strchr(buf, EOF))
+	{	
+		ft_stack_push(ft_stack_init_elem(EOF, 1));
+		return (2);
+	}
+	return (1);
 }
-
-char	*ft_cpy_to_buf(int fd)
+/*
+int	ft_stack_to_line(t_list *st, char **line)
 {
-	char	*buf_tmp;
-	char	*buf;
-	int		n;
-	int		len;
+	
+}*/
 
-	if (!(buf_tmp = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1)))
-			|| !buf_tmp)
-		return (NULL);
-	len = 0;
+int		get_next_line(const int fd, char **line)
+{
+	int				n;
+	static t_list	*st;
+	int				len;
+	char			*buf_tmp;
+
+	if (!(buf_tmp = (char*)malloc(sizeof(char) * (BUFF_SIZE + 1))) || !buf_tmp)
+		return (-1);
+	i = 0;
 	while ((n = read(fd, buf_tmp, BUFF_SIZE)) > 0)
 	{
-		len += n;
+		buf_tmp[n] = '\0';
+		if (!ft_to_stack(st, buf_tmp, n) || !(n = ft_stack_to_line(st, line)) || !n)
+			return (-1);
+		else if (n == 2)
+			return (0);
+		else if (n == 3)
+			continue;
 	}
-	if (!(buf = (char *)malloc(sizeof(char) * (len + 1))) || !buf)
-		return (NULL);
-	buf[len] = '\0';
-	while ((n = read(fd, buf_tmp, BUFF_SIZE)) > 0)
-	{
-		ft_strncat(buf, buf_tmp, n);
-	}
-	free(buf_tmp);
-	return (buf);
-}
-
-int		get_next_line(int fd, char **line)
-{
 	return (1);
 }

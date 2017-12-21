@@ -6,12 +6,18 @@
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/18 15:48:41 by qtran             #+#    #+#             */
-/*   Updated: 2017/12/21 15:12:46 by qtran            ###   ########.fr       */
+/*   Updated: 2017/12/21 15:20:43 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+/*
+ * ft_to_stack return 0 when errors
+ *			   return 1 when get line
+ *			   return 2 when buf doesnt have \n and EOF
+ *			   return 3 when buf has EOF
+ */ 
 int	ft_to_stack(t_list *st, char *buf, int size)
 {
 	char	*str;
@@ -43,6 +49,10 @@ int	ft_to_stack(t_list *st, char *buf, int size)
 	return (1);
 }
 /*
+ * ft_stack_to_line return 0 when errors
+ *         			return 1 when get line ok
+ *					return 2 when get half line
+ *
 int	ft_stack_to_line(t_list *st, char **line)
 {
 	

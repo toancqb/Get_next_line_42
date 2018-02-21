@@ -5,50 +5,48 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/16 17:26:06 by qtran             #+#    #+#             */
-/*   Updated: 2018/02/20 18:00:01 by qtran            ###   ########.fr       */
+/*   Created: 2018/02/21 17:20:40 by qtran             #+#    #+#             */
+/*   Updated: 2018/02/21 17:46:37 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-/*
-int		get_line(char *str, char **remainder)
-{
-			
-}*/
 
-int		get_next_line(const int fd, char **line)
+int		get_next_line(int const fd, char **line)
 {
+	static int count;
 	int n;
+	int d = 0, i = 0;
 	char *buf;
-	char		*tmp;
-	static int	count;
-	static char *remainder;
-	static char *line_cur;
+	char *tmp ;
+	static char *res, **tab;
 
-	if (!(buf = (char*)malloc(sizeof(char) * (BUFF_SIZE + 1))) && !buf)
-			return (-1);
+	buf = (char*)malloc(sizeof(char) * (BUFF_SIZE + 1));
+	res = ft_strnew(1);
+	if (count == 0) {
 	while ((n = read(fd, buf, BUFF_SIZE)) > 0)
 	{
 		buf[n] = '\0';
-		if (count++ == 0 || remainder == NULL)
-			remainder = ft_strdup(buf);
-		tmp = ft_strchr(remainder, '\n');
-		if (tmp == NULL)
+		i = 0;
+		while (buf[i] != '\0')
 		{
-			if (line_cur == NULL)
-				line_cur = ft_strnew(1);
-			line_cur = ft_strjoin(line_cur, remainder);
-			continue;
+			if (buf[i] == '\n')
+				d++;
+			i++;
 		}
-		else
-		{
-			*line = ft_strjoin(line_cur, ft_strsub(remainder, 0, tmp - remainder));
-			remainder = ft_strsub(remainder, tmp - remainder + 1, ft_strlen(remainder) - (tmp - remainder));
-			free(line_cur);
-			line_cur = NULL;
-			return (1);	
-		}
+		tmp = ft_strjoin(res, buf);
+		free(res);
+		res = tmp;
+	}
+	
+	tab = (char**)malloc(sizeof(char*) * (d + 1));
+	tab[d] = NULL;
+	tab = ft_strsplit(res, '\n'); 
+	}
+	if (tab[count] != NULL)
+	{
+		*line = tab[count++];
+		return (1);
 	}
 	return (0);
 }

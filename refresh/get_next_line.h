@@ -6,7 +6,7 @@
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/18 15:48:03 by qtran             #+#    #+#             */
-/*   Updated: 2018/02/20 14:53:05 by qtran            ###   ########.fr       */
+/*   Updated: 2018/02/21 17:46:40 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <sys/types.h>
 # include <sys/uio.h>
 # include "../libft/libft.h"
-# define BUFF_SIZE 3
+# define BUFF_SIZE 999
 
 int		get_next_line(const int fd, char **line);
 

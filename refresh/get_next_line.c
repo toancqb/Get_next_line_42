@@ -1,52 +1,31 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/21 17:20:40 by qtran             #+#    #+#             */
-/*   Updated: 2018/02/21 17:46:37 by qtran            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		get_next_line(int const fd, char **line)
+int	get_next_line(int const fd, char **line)
 {
-	static int count;
-	int n;
-	int d = 0, i = 0;
-	char *buf;
-	char *tmp ;
-	static char *res, **tab;
-
-	buf = (char*)malloc(sizeof(char) * (BUFF_SIZE + 1));
-	res = ft_strnew(1);
-	if (count == 0) {
-	while ((n = read(fd, buf, BUFF_SIZE)) > 0)
-	{
-		buf[n] = '\0';
-		i = 0;
-		while (buf[i] != '\0')
-		{
-			if (buf[i] == '\n')
-				d++;
-			i++;
-		}
-		tmp = ft_strjoin(res, buf);
-		free(res);
-		res = tmp;
-	}
+	int		ret;
+	static char	*line_cur;
+	char		buf[BUFF_SIZE + 1];
 	
-	tab = (char**)malloc(sizeof(char*) * (d + 1));
-	tab[d] = NULL;
-	tab = ft_strsplit(res, '\n'); 
-	}
-	if (tab[count] != NULL)
+	if (!line_cur)
+		line_cur = ft_strnew(1);
+	*line = ft_strnew(1);
+	while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
 	{
-		*line = tab[count++];
-		return (1);
+		buf[ret] = '\0';
+		line_cur = ft_strjoin(line_cur, buf);	
+		if (ft_strchr(buf, '\n'))
+			break;
 	}
-	return (0);
+	if (ret < BUFF_SIZE && !ft_strlen(line_cur))
+		return (0);
+	*line = ft_strsub(line_cur, 0, ft_strchr(line_cur, '\n') - line_cur);
+	if (ft_strchr(line_cur, '\n') - line_cur == ft_strlen(line_cur))
+	{
+		free(line_cur);
+		line_cur = NULL;
+	}
+	else
+		line_cur += ft_strchr(line_cur, '\n') - line_cur + 1;
+	return (1);
 }

@@ -1,24 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/18 15:48:03 by qtran             #+#    #+#             */
-/*   Updated: 2018/02/21 17:46:40 by qtran            ###   ########.fr       */
+/*   Created: 2017/11/08 12:10:09 by qtran             #+#    #+#             */
+/*   Updated: 2017/11/08 13:00:04 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _GET_NEXT_LINE_H
-# define _GET_NEXT_LINE_H
-# include <stdlib.h>
-# include <unistd.h>
-# include <sys/types.h>
-# include <sys/uio.h>
-# include "libft/libft.h"
-# define BUFF_SIZE 999
+#include "libft.h"
 
-int		get_next_line(const int fd, char **line);
-
-#endif
+int		ft_isdigit(int c)
+{
+	if (c >= 48 && c <= 57)
+		return (1);
+	return (0);
+}

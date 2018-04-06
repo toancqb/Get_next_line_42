@@ -1,24 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_strmap.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/18 15:48:03 by qtran             #+#    #+#             */
-/*   Updated: 2018/02/21 17:46:40 by qtran            ###   ########.fr       */
+/*   Created: 2017/11/10 01:04:30 by qtran             #+#    #+#             */
+/*   Updated: 2017/11/10 04:41:38 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _GET_NEXT_LINE_H
-# define _GET_NEXT_LINE_H
-# include <stdlib.h>
-# include <unistd.h>
-# include <sys/types.h>
-# include <sys/uio.h>
-# include "libft/libft.h"
-# define BUFF_SIZE 999
+#include "libft.h"
 
-int		get_next_line(const int fd, char **line);
+char	*ft_strmap(char const *s, char (*f)(char))
+{
+	char	*str;
+	size_t	i;
 
-#endif
+	if (!s || !f)
+		return (NULL);
+	str = ft_strdup(s);
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (str[i] != '\0')
+	{
+		str[i] = f((char)s[i]);
+		i++;
+	}
+	return (str);
+}

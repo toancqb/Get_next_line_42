@@ -1,24 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_memccpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/18 15:48:03 by qtran             #+#    #+#             */
-/*   Updated: 2018/02/21 17:46:40 by qtran            ###   ########.fr       */
+/*   Created: 2017/11/09 19:23:58 by qtran             #+#    #+#             */
+/*   Updated: 2017/11/15 16:24:21 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef _GET_NEXT_LINE_H
-# define _GET_NEXT_LINE_H
-# include <stdlib.h>
-# include <unistd.h>
-# include <sys/types.h>
-# include <sys/uio.h>
-# include "libft/libft.h"
-# define BUFF_SIZE 999
+#include "libft.h"
 
-int		get_next_line(const int fd, char **line);
+void	*ft_memccpy(void *dst,
+		const void *src, int c, size_t n)
+{
+	size_t			i;
+	unsigned char	*tmp1;
+	unsigned char	*tmp2;
 
-#endif
+	i = 0;
+	tmp1 = (unsigned char *)dst;
+	tmp2 = (unsigned char *)src;
+	while (i < n)
+	{
+		tmp1[i] = tmp2[i];
+		if (tmp2[i] == (unsigned char)c)
+			return ((void *)&tmp1[i + 1]);
+		i++;
+	}
+	return (NULL);
+}

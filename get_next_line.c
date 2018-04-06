@@ -5,78 +5,39 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/18 15:48:41 by qtran             #+#    #+#             */
-/*   Updated: 2017/12/21 15:20:43 by qtran            ###   ########.fr       */
+/*   Created: 2018/04/06 15:06:53 by qtran             #+#    #+#             */
+/*   Updated: 2018/04/06 15:08:56 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-/*
- * ft_to_stack return 0 when errors
- *			   return 1 when get line
- *			   return 2 when buf doesnt have \n and EOF
- *			   return 3 when buf has EOF
- */ 
-int	ft_to_stack(t_list *st, char *buf, int size)
+int		get_next_line(int const fd, char **line)
 {
-	char	*str;
-	int		i;
-	int		m;
-	t_list *elem;
+	int			ret;
+	static char	*line_cur;
+	char		buf[BUFF_SIZE + 1];
 
-	str = ft_strchr(buf, '\n');
-	m = 0;
-	while (str != NULL)
+	if (!line_cur)
+		line_cur = ft_strnew(1);
+	*line = ft_strnew(1);
+	while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
 	{
-		elem = ft_stack_init_elem(ft_strsub(buf, 0, str - buf), str - buf);
-		ft_stack_push(st, elem);
-		ft_stack_push(ft_stack_init_elem("__\n__", 5));
-		m = str - buf;
-		str = ft_strchr(ft_strsub(buf, m, size - str + buf));
+		buf[ret] = '\0';
+		line_cur = ft_strjoin(line_cur, buf);
+		if (ft_strchr(buf, '\n'))
+			break ;
 	}
-	elem = ft_stack_init_elem(ft_strsub(buf, m, size - m), size - m);
-	ft_stack_push(st, elem);
-	if (!ft_strchr(ft_strsub(buf, m, size - m), '\n'))
+	if (ret < BUFF_SIZE && !ft_strlen(line_cur))
+		return (0);
+	*line = ft_strsub(line_cur, 0, ft_strchr(line_cur, '\n') - line_cur);
+	if ((long)(ft_strchr(line_cur, '\n') - line_cur) ==
+	(long)ft_strlen(line_cur))
 	{
-		return (3);
+		free(line_cur);
+		line_cur = NULL;
 	}
-	if (ft_strchr(buf, EOF))
-	{	
-		ft_stack_push(ft_stack_init_elem(EOF, 1));
-		return (2);
-	}
-	return (1);
-}
-/*
- * ft_stack_to_line return 0 when errors
- *         			return 1 when get line ok
- *					return 2 when get half line
- *
-int	ft_stack_to_line(t_list *st, char **line)
-{
-	
-}*/
-
-int		get_next_line(const int fd, char **line)
-{
-	int				n;
-	static t_list	*st;
-	int				len;
-	char			*buf_tmp;
-
-	if (!(buf_tmp = (char*)malloc(sizeof(char) * (BUFF_SIZE + 1))) || !buf_tmp)
-		return (-1);
-	i = 0;
-	while ((n = read(fd, buf_tmp, BUFF_SIZE)) > 0)
-	{
-		buf_tmp[n] = '\0';
-		if (!ft_to_stack(st, buf_tmp, n) || !(n = ft_stack_to_line(st, line)) || !n)
-			return (-1);
-		else if (n == 2)
-			return (0);
-		else if (n == 3)
-			continue;
-	}
+	else
+		line_cur += ft_strchr(line_cur, '\n') - line_cur + 1;
 	return (1);
 }

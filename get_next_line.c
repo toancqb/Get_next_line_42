@@ -5,39 +5,79 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: qtran <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/04/06 15:06:53 by qtran             #+#    #+#             */
-/*   Updated: 2018/04/06 15:08:56 by qtran            ###   ########.fr       */
+/*   Created: 2018/05/10 16:20:35 by qtran             #+#    #+#             */
+/*   Updated: 2018/07/02 16:17:26 by qtran            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		get_next_line(int const fd, char **line)
+t_list	*get_current_fd(t_list **st, const int fd)
 {
-	int			ret;
-	static char	*line_cur;
-	char		buf[BUFF_SIZE + 1];
+	t_list *tmp;
 
-	if (!line_cur)
-		line_cur = ft_strnew(1);
-	*line = ft_strnew(1);
+	tmp = *st;
+	while (tmp)
+	{
+		if ((int)tmp->content_size == fd)
+			return (tmp);
+		tmp = tmp->next;
+	}
+	tmp = ft_lstnew("\0", fd);
+	ft_lstadd(st, tmp);
+	tmp = *st;
+	return (tmp);
+}
+
+int		ft_strcpy_ch(char **line, char *buf, char c)
+{
+	int i;
+
+	i = 0;
+	while (buf[i] != '\0')
+	{
+		if (buf[i] == c)
+			break ;
+		i++;
+	}
+	*line = (char*)malloc(sizeof(char) * (i + 1));
+	(*line)[i] = '\0';
+	*line = ft_strncpy(*line, buf, i);
+	return (i);
+}
+
+void	ft_next_n_char(char **str, unsigned int n)
+{
+	char *tmp;
+
+	tmp = *str;
+	*str = ft_strdup(tmp + n);
+	ft_strdel(&tmp);
+}
+
+int		get_next_line(const int fd, char **line)
+{
+	int				ret;
+	static t_list	*st;
+	char			buf[BUFF_SIZE + 1];
+	t_list			*cur;
+
+	if (fd < 0 || !line || read(fd, buf, 0) < 0)
+		return (-1);
+	cur = get_current_fd(&st, fd);
 	while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
 	{
 		buf[ret] = '\0';
-		line_cur = ft_strjoin(line_cur, buf);
+		cur->content = ft_strjoin(cur->content, buf);
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
-	if (ret < BUFF_SIZE && !ft_strlen(line_cur))
+	if (ret < BUFF_SIZE && !ft_strlen(cur->content))
 		return (0);
-	*line = ft_strsub(line_cur, 0, ft_strchr(line_cur, '\n') - line_cur);
-	if ((long)(ft_strchr(line_cur, '\n') - line_cur) ==
-	(long)ft_strlen(line_cur))
-	{
-		free(line_cur);
-		line_cur = NULL;
-	}
+	ret = ft_strcpy_ch(line, cur->content, '\n');
+	if (ret < (int)ft_strlen(cur->content))
+		ft_next_n_char((char**)&cur->content, ret + 1);
 	else
-		line_cur += ft_strchr(line_cur, '\n') - line_cur + 1;
+		ft_strclr(cur->content);
 	return (1);
 }
